@@ -9,6 +9,8 @@
 typedef struct _FL_Health {
     int MAX_HP;
     int CURRENT_HP;
+
+    FL_DMG_TYPES dmg_type;
     int Damage_Taken;
     int Damage_Taken_cummulative;
 } FL_Health;
@@ -32,6 +34,8 @@ typedef struct _FL_Character {
     int DEF;
     int RES;
     int SPD;
+    FL_SP SP;
+    FL_EFFECTED active[MAX_EFFECTS];
 
     //Growth Stats;
     int Hp_g;
@@ -45,9 +49,9 @@ typedef struct _FL_Character {
 
     // Card shit !
     int Unlocked_Deck;
-    FL_CARD Deck[8]; // Up to 8 incantation for cost 6 characters
+    FL_CARD Deck[7]; // Up to 7 incantation for cost 5 characters
     FL_CARD Normal_Attack;
-    FL_ULT_CARD Ult;    
+    FL_CARD Ult;
 
 } FL_Character;
 
@@ -57,10 +61,18 @@ typedef struct _FL_ENEMY {
     char Name[MAX_NAME];
     char Card_Bg[MAX_NAME];
 
+    //Stats
+    int Lvl;
+    FL_Health HP;
+    int ATK;
+    int DEF;
+    int RES;
+    int SPD;
+
     //Cards
     FL_CARD Deck[2];
     FL_CARD Normal_Attack;
-    FL_ULT_CARD Ult;
+    FL_CARD Ult;
 
     //AI bs
     float Aggresive;
@@ -130,6 +142,7 @@ typedef struct _FL_ROUND_PACKET {
     FL_ENEMY* Enemies[3];
 
     FL_CARD* cardplayed;
+
     int DMG_TAKEN[3];
     FL_EFFECTS Effects[MAX_EFFECTS];
 
