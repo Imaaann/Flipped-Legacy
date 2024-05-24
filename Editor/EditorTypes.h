@@ -1,8 +1,10 @@
 #define MAX_CHILDREN 8
 #define MAX_NAME 256
 #define MAX_MESSAGE 1024
-#include "Cards/CardTypes.h"
 #include <stdbool.h>
+#include "EditorEnums.h"
+#include "PowerWords/PowerWordTypes.h"
+#include "Cards/CardTypes.h"
 
 typedef struct _FL_Health {
     int MAX_HP;

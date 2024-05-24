@@ -77,7 +77,7 @@ typedef enum _FL_DMG_TYPES {
 
 typedef enum _FL_POWER_NAMES {
     DEAL,
-    HEAL,
+    MEND,
     INFLICT,
     DISPEL,
     SUMMON,
@@ -85,7 +85,7 @@ typedef enum _FL_POWER_NAMES {
 } FL_POWER_NAMES;
 
 typedef enum _FL_INC_TYPE {
-    ATK,
+    ATTACK,
     BUFF,
     DEBUFF,
     COUNTER,

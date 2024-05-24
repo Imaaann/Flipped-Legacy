@@ -1,4 +1,4 @@
-#include "PowerWords/PowerWordTypes.h"
+
 /// @brief Self explanatory really
 typedef struct _FL_ULT_CARD {
     char Name[MAX_NAME];

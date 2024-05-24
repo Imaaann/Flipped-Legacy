@@ -1,4 +1,4 @@
-#include "EditorEnums.h"
+
 
 #define MAX_EFFECTS 16
 
@@ -20,6 +20,7 @@ typedef struct _FL_SUMMON {
 
 typedef struct _FL_POWER_DEAL {
     FL_POWER_NAMES type;
+    FL_STATS Stat;
     int multi;
     int targets;
     FL_DMG_TYPES dmg_type;
@@ -27,6 +28,7 @@ typedef struct _FL_POWER_DEAL {
 
 typedef struct _FL_POWER_HEAL {
     FL_POWER_NAMES type;
+    FL_STATS Stat;
     int multi;
     int targets;
 } FL_POWER_HEAL;
