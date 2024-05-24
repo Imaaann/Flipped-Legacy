@@ -1,0 +1,106 @@
+typedef enum _FL_COST{
+    CHEAP,
+    LOW,
+    MEDIUM,
+    HIGH,
+    EXPENSIVE
+} FL_COST;
+
+typedef enum _FL_SP_REGEN{
+    AUTOMATIC,
+    OFFENSIVE,
+    DEFENSIVE
+} FL_SP_REGEN;
+
+typedef enum _FL_CONDITIONS {
+    NO_CONDITION,
+    UNDER_HP,
+    ABOVE_HP,
+    ALLY_ABOVE_HP,
+    ALLY_UNDER_HP,
+    ENEMY_BELOW_HP,
+    ENEMY_ABOVE_HP,
+    ALLY_NUM_ABOVE_HP,
+    ENEMY_NUM_UNDER_HP,
+    BUFFED,
+    DEBUFFED,
+    NUM_ALLY_ALIVE,
+    NUM_ENEMY_ALIVE,
+    DMG_TAKEN,
+    DMG_TAKEN_PARAM,
+    FATAL_HIT,
+    DMG_TAKEN_LASTROUNDS,
+    SP_COST,
+} FL_CONDITIONS;
+
+typedef enum _FL_EFFECTS {
+    //Buffs
+    STATS_UP,
+    STATS_UP_STACKABLE,
+    REFLECT,
+    RIOT,
+    ENERGY_SYPHON,
+    CURE,
+    INVISIBILITY,
+    BARRIER,
+    INSPIRITATION,
+    ARCANE_STEMP,
+
+    //Debuffs
+    STATS_DOWN,
+    STATS_DOWN_STACKABLE,
+    NASTY_WOUND,
+    SEAL,
+    SILENCE,
+    TAUNT,
+    DISARM,
+    BIND,
+    PARALIZED,
+    SKILL_DRAIN,
+    DISCONCERT,
+    CONFUSION,
+} FL_EFFECTS;
+
+typedef enum _FL_STATS {
+    HP,
+    ATK,
+    DEF,
+    RES,
+    SPD,
+    SP,
+} FL_STATS;
+
+typedef enum _FL_DMG_TYPES {
+    PHYSICAL,
+    MAGIC,
+} FL_DMG_TYPES;
+
+typedef enum _FL_POWER_NAMES {
+    DEAL,
+    HEAL,
+    INFLICT,
+    DISPEL,
+    SUMMON,
+    IMMUNE,
+} FL_POWER_NAMES;
+
+typedef enum _FL_INC_TYPE {
+    ATK,
+    BUFF,
+    DEBUFF,
+    COUNTER,
+    HEAL,
+} FL_INC_TYPE;
+
+typedef enum _FL_CARD_TYPE {
+    NORMAL,
+    INCANTATION,
+    ULTIMATE,
+} FL_CARD_TYPE;
+
+typedef enum _FL_SKIP_COND {
+    DEFAULT,
+    BUTTON,
+    MENU,
+    TIME,
+} FL_SKIP_COND;

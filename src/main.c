@@ -122,15 +122,6 @@ void Render(void) {
 
 
 
-
-
-
-
-
-
-
-
-
 void Destroy_Window(void) {
     IMG_Quit();
     TTF_Quit();
