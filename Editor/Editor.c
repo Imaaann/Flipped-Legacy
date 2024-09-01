@@ -1,12 +1,15 @@
 #include <ncurses/ncurses.h>
 #include "EditorTypes.h"
 
-//handlers
-#include "Handlers/FL_Handlers.c"
-
 // UI fucntions
 #include "UI/CrerateMenu.c"
 #include "UI/Logo.c"
+
+//handlers
+#include "Handlers/FL_Handlers.c"
+
+
+
 
 
 

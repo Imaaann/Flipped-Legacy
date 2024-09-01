@@ -1,14 +1,13 @@
 #include <ncurses/ncurses.h>
-#include "../EditorTypes.h"
+//#include "../EditorTypes.h"
 
 
-void CreateInputWindow(WINDOW* w, FL_CARD_TYPE t) {
-
+void CreateInputWindow(WINDOW* w, FL_CARD_TYPE t, int n) {
     const char* types[] = {"Normal","Incantation","Ultimate"};
 
     wclear(w);
     box(w,0,0);
-    mvwprintw(w,0,1,"Card Editor (%s) ",types[t]);
+    mvwprintw(w,0,1,"Card Editor (%s/%d) ",types[t],n);
     mvwprintw(w,1,1,"Name:");
     mvwprintw(w,1,40,"| Image Path:");
     mvwprintw(w,2,1,"Lore:");
@@ -31,8 +30,8 @@ void ReadInputWindow(WINDOW* w,FL_CARD_TIER* card,FL_CARD_TYPE t) {
         do {
 
             wattron(w,COLOR_PAIR(h+2));
-            mvwprintw(w,7,19,"               ");
-            mvwprintw(w,7,19,"%s",choices[h]);
+            mvwprintw(w,7,47,"               ");
+            mvwprintw(w,2,47,"%s",choices[h]);
             wattroff(w,COLOR_PAIR(h+2));
             choice = wgetch(w);
 
@@ -57,15 +56,55 @@ void ReadInputWindow(WINDOW* w,FL_CARD_TIER* card,FL_CARD_TYPE t) {
     }
 }
 
+FL_POWER_WORD ReadPowerWord(WINDOW* w) {
+    
+    wclear(w);
+    box(w,0,0);
+
+    mvwprintw(w,1,1,"Select your Power word: ");
+    const char* PowerWords[] = {"DEAL","MEND","INFLICT","DISPEL","SUMMON","IMMUNE"};
+    int h = CreateSimpleMenu(w,PowerWords,6,25,1);
+    FL_POWER_NAMES type = h;
+
+    switch (type) {
+
+        case DEAL:
+
+        break;
+
+        case MEND:
+        
+        break;
+
+        case INFLICT:
+        
+        break;
+
+        case SUMMON:
+        
+        break;
+
+        case IMMUNE:
+        
+        break;
+
+
+
+
+    }
+
+
+}
+
 FL_CARD NewCard(WINDOW* w, FL_CARD_TYPE t) {
 
     FL_CARD Card;
 
-    
-
     for (int i=0; i<3; i++) {
-        CreateInputWindow(w,t);
+        CreateInputWindow(w,t,i+1);
         ReadInputWindow(w,&Card.Card[i],t);
+        Card.Card[i].pw1 = ReadPowerWord(w);
+
     }
 
 

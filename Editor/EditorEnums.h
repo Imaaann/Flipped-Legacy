@@ -34,6 +34,7 @@ typedef enum _FL_CONDITIONS {
 } FL_CONDITIONS;
 
 typedef enum _FL_EFFECTS {
+    NO_EFFECT,
     //Buffs
     STATS_UP,
     STATS_UP_STACKABLE,
