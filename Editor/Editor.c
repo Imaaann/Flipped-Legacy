@@ -8,12 +8,6 @@
 //handlers
 #include "Handlers/FL_Handlers.c"
 
-
-
-
-
-
-
 int main() {
     initscr();
     cbreak();

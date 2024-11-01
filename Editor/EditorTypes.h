@@ -152,4 +152,5 @@ typedef struct _FL_GAME_DATA {
     char Name[MAX_NAME];
     char CharList[MAX_NAME];
     char EnemyList[MAX_NAME];
+    int local_var[16];
 } FL_GAME_DATA;

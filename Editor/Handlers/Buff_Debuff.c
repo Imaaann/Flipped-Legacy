@@ -1,14 +1,10 @@
 #include "../EditorTypes.h"
 #include <stdio.h>
 
-void StatsManipulator(FL_STATS stat1 , FL_STATS stat2 , int mult1 , int mult2 , FL_ROUND_PACKET round_packet , int isBuff ){
+void StatsManipulator(FL_STATS stat1 , FL_STATS stat2 , int mult1 , int mult2 , FL_ROUND_PACKET round_packet){
     int i;
-    if(isBuff == 0){
-        mult1 = -mult1;
-        mult2 = -mult2;
-        }
 
-     switch (stat1){
+    switch (stat1){
         case 0:
             for(i=0 ; i<3 ; i++){
                 if(round_packet.Effected_Enem[i] == 1){
@@ -213,7 +209,8 @@ void Barrier(FL_ROUND_PACKET round_packet , int x) {
         if(Eff_Enem[i] != NULL){
             Eff_Enem[i]->HP.CURRENT_HP += x;
         }
-    }}
+    }
+}
 
 void Inspiritation(FL_ROUND_PACKET round_packet) {
     

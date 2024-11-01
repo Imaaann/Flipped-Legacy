@@ -3,7 +3,3 @@ edit:
 	
 build:
 	gcc -Wall -I libraries/include -L libraries/lib -o game.exe src/main.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf && ./game.exe
-
-testBuild:
-	gcc -Wall -I libraries/include -L libraries/lib -o Test/test.exe Test/test.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image && Test/test.exe
-
