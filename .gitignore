@@ -1,0 +1,51 @@
+# Build directory
+/build/
+
+# Meson logs and configuration files
+/meson-logs/
+/meson-private/
+
+# Backup files created by editors
+*~
+*.swp
+*.swo
+*.bak
+
+# OS-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Compiler and IDE-generated files
+*.o
+*.a
+*.so
+*.exe
+*.out
+*.obj
+*.dll
+*.pdb
+*.idb
+*.ilk
+*.lib
+
+# CTags and CScope files
+tags
+cscope.*
+
+# Editor/project-specific settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Debugging tools
+*.gdb
+*.dSYM/
+vgcore.*
+.valgrind/
+
+# Other temporary files
+*.log
+*.tmp
+*.lock
+*.cache
+*.pid
