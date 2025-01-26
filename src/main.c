@@ -18,7 +18,7 @@ unsigned int menu_inline(WINDOW* win, int y, int x, char** menu_items, int menu_
     int choice;
     int index = 0;
     while (true) {
-        mvwprintw(win, y, x, "                ");
+        mvwprintw(win, y, x, "                                ");
         mvwprintw(win, y, x, "%s", menu_items[index]);
         choice = wgetch(win);
         switch (choice) {
@@ -46,11 +46,13 @@ WINDOW* print_info(void) {
 
     mvwprintw(info, 1, 1, "Welcome to the FL Editor");
     mvwprintw(info, 2, 1, "Version: ");
-    mvwprintw(info, 3, 1, "sizeof(character): %lld", sizeof(FLCharacter));
 
     wattron(info, COLOR_PAIR(1));
     wprintw(info, "%s", FL_EDITOR_VERSION);
     wattroff(info, COLOR_PAIR(1));
+
+    mvwprintw(info, 3, 1, "sizeof(character): %lld", sizeof(FLCharacter));
+
     wrefresh(info);
     return info;
 }
@@ -97,6 +99,139 @@ FLGameData print_basic_info(FLGameData data) {
 
     delwin(input);
     return data;
+}
+
+void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
+    mvwprintw(input, 0, 0, "Word %d", word_num);
+    mvwprintw(input, 1, 0, "Condition: ");
+    char* conditionOptions[] = {"NONE",
+                                "UNDER HP",
+                                "ABOVE HP",
+                                "ALLY UNDER HP",
+                                "ALLY ABOVE HP",
+                                "ENEMY UNDER HP",
+                                "ENEMY ABOVE HP",
+                                "NUMBER ALLY UNDER_HP",
+                                "NUMBER ALLY ABOVE_HP",
+                                "NUMBER ENEMY UNDER_HP",
+                                "NUMBER ENEMY ABOVE_HP",
+                                "NUMBER ALLY ALIVE",
+                                "NUMBER ENEMY ALIVE",
+                                "IS BUFFED",
+                                "IS DEBUFFED",
+                                "TARGET IS BUFFED",
+                                "TARGERT IS DEBUFFED",
+                                "DAMAGE",
+                                "DAMAGE UNDER HP",
+                                "DAMAGE ABOVE HP",
+                                "DAMAGE NUMBER TURNS",
+                                "SP COST"};
+    word->condition.type = menu_inline(input, 1, 12, conditionOptions, 22);
+
+    switch (word->condition.type) {
+
+    case UNDER_HP:
+    case ABOVE_HP:
+    case ALLY_ABOVE_HP:
+    case ALLY_UNDER_HP:
+    case ENEMY_ABOVE_HP:
+    case ENEMY_UNDER_HP:
+    case DAMAGE_ABOVE_HP:
+    case DAMAGE_UNDER_HP:
+        mvwprintw(input, 2, 0, "HP Percentage: ");
+        mvwscanw(input, 2, 15, "%d", &word->condition.coeff1);
+        word->condition.coeff2 = -1;
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
+
+    case DAMAGE_NUMBER_TURNS:
+        mvwprintw(input, 2, 0, "Number of turns to check damage: ");
+        mvwscanw(input, 2, 33, "%d", &word->condition.coeff1);
+        word->condition.coeff2 = -1;
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
+    case SP_COST:
+        mvwprintw(input, 2, 0, "Cost: ");
+        mvwscanw(input, 2, 6, "%d", &word->condition.coeff1);
+        word->condition.coeff2 = -1;
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
+
+    case NUMBER_ALLY_ALIVE:
+    case NUMBER_ENEMY_ALIVE:
+        mvwprintw(input, 2, 0, "Number to check (>=): ");
+        mvwscanw(input, 2, 22, "%d", &word->condition.coeff1);
+        word->condition.coeff2 = -1;
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
+
+    case NUMBER_ALLY_ABOVE_HP:
+    case NUMBER_ALLY_UNDER_HP:
+    case NUMBER_ENEMY_ABOVE_HP:
+    case NUMBER_ENEMY_UNDER_HP:
+        mvwprintw(input, 2, 0, "HP Percentage: ");
+        mvwprintw(input, 3, 0, "Number: ");
+        mvwscanw(input, 2, 15, "%d", &word->condition.coeff1);
+        mvwscanw(input, 3, 8, "%d", &word->condition.coeff2);
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
+
+    case TARGET_BUFF:
+    case IS_BUFF:
+        mvwprintw(input, 2, 0, "Effect: ");
+        char* buffOption[] = {"STATS UP", "STATS UP STACKABLE", "ROLL",
+                              "REFLECT",  "ENERGY SIPHON",      "INVISIBILITY",
+                              "BARRIER",  "INSPIRATION",        "ARCANE STAMP"};
+        word->condition.effect = menu_inline(input, 2, 8, buffOption, 9);
+        word->condition.coeff1 = -1;
+        word->condition.coeff2 = -1;
+        break;
+
+    case IS_DEBUFF:
+    case TARGET_DEBUFF:
+        mvwprintw(input, 2, 0, "Effect: ");
+        char* debuffOption[] = {
+            "STATS DOWN", "STATS DOWN STACK", "NASTY WOUND", "SEAL",      "SILENCE",
+            "TAUNT",      "DISARM",           "BIND",        "PARALYZED", "SKILL DRAIN",
+            "DISCONCERT", "CONFUSED"};
+        word->condition.effect = menu_inline(input, 2, 8, debuffOption, 9);
+        word->condition.coeff1 = -1;
+        word->condition.coeff2 = -1;
+        break;
+    }
+}
+
+void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
+    init_pair(COLOR_GREEN, COLOR_BLACK, 2);
+
+    char* className = (deck_index == NORMAL) ? "Normal Attack" : "Incantation";
+    mvwprintw(input, 5, 1, "                                ");
+    mvwprintw(input, 5, 1, "Card Class: %s", className);
+    mvwprintw(input, 6, 1, "Card Type: ");
+
+    card->class = (deck_index == NORMAL) ? NORMAL : INCANTATION;
+
+    char* typeOptions[] = {"Attack", "Heal", "Buff", "Debuff", "Counter"};
+    card->type = menu_inline(input, 6, 12, typeOptions, 5);
+
+    WINDOW* wordInput = subwin(input, 10, MAX_COLUMNS - 2, 14, 1);
+    wattron(wordInput, A_BOLD);
+    for (int i = 0; i < 2; i++) {
+        whline(wordInput, 0, MAX_COLUMNS - 2);
+        fl_card_get_word(&card->words[i], wordInput, i + 1);
+        wclear(wordInput);
+        wrefresh(wordInput);
+    }
+    wattroff(wordInput, A_BOLD);
+    wrefresh(input);
+}
+
+void fl_card_family_get_info(FLCardFamily* family, WINDOW* input, int current, int total) {
+    for (int i = 0; i < 3; i++) {
+        mvwprintw(input, 3, 1, "Card Family: %d/%d", current + 1, total);
+        mvwprintw(input, 4, 1, "Card Stars: %d/3", i + 1);
+        fl_card_get_info(&family->members[i], input, current);
+    }
 }
 
 void character_get_meta_data(FLCharacter* character, WINDOW* input, int current, int total) {
@@ -168,7 +303,7 @@ void character_get_stats(FLCharacter* character, WINDOW* input, int current, int
 FLCharacter character_get_info(int current, int total) {
     refresh();
     FLCharacter data;
-    WINDOW* input = newwin(10, MAX_COLUMNS, 5, 0);
+    WINDOW* input = newwin(20, MAX_COLUMNS, 5, 0);
     box(input, 0, 0);
 
     character_get_meta_data(&data, input, current, total);
@@ -176,6 +311,12 @@ FLCharacter character_get_info(int current, int total) {
 
     character_get_stats(&data, input, current, total);
     reinit_window(input);
+
+    for (unsigned int i = 0; i < 4 + data.stats.quality; i++) {
+        mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+        mvwprintw(input, 2, 1, "Step3: Card creation");
+        fl_card_family_get_info(&data.deck[i], input, i, 4 + data.stats.quality);
+    }
 
     return data;
 }
@@ -188,7 +329,7 @@ int main() {
     WINDOW* info = print_info();
 
     FLGameData data = get_basic_info();
-    print_basic_info(data);
+    strcpy(data.editorVersion, FL_EDITOR_VERSION);
 
     FLCharacter characters[data.characterCount];
     for (int i = 0; i < data.characterCount; i++) {

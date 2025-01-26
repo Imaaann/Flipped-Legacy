@@ -42,7 +42,8 @@ enum _FLConditionType {
     DAMAGE,
     DAMAGE_UNDER_HP,
     DAMAGE_ABOVE_HP,
-    DAMAGE_NUMBER_TURNS
+    DAMAGE_NUMBER_TURNS,
+    SP_COST
 };
 typedef enum _FLConditionType FLConditionType;
 
@@ -62,7 +63,7 @@ enum _FLEffectType {
     STATS_DOWN,
     STATS_DOWN_STACK,
     NASTY_WOUND,
-    SEALED,
+    SEAL,
     SILENCE,
     TAUNT,
     DISARM,
@@ -70,7 +71,9 @@ enum _FLEffectType {
     PARALYZED,
     SKILL_DRAIN,
     DISCONCERT,
-    CONFUSED
+    CONFUSED,
+
+    UNDEFINED_EFFECT
 };
 typedef enum _FLEffectType FLEffectType;
 
@@ -91,6 +94,7 @@ struct _FLStatSheet {
 typedef struct _FLStatSheet FLStatSheet;
 
 typedef struct {
+    char editorVersion[16];
     char gameName[64];
     int characterCount;
     int enemyCount;
@@ -109,7 +113,7 @@ struct _FLCondition {
     FLConditionType type;
     int coeff1;
     int coeff2;
-    FLEffect effect;
+    FLEffectType effect;
 };
 typedef struct _FLCondition FLCondition;
 

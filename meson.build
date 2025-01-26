@@ -5,7 +5,6 @@ project(
 )
 
 curses_dep = dependency('curses', required: true)
-glib_dep = dependency('glib-2.0')
 
 include_dir = include_directories('include')
 
