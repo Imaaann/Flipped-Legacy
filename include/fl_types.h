@@ -15,7 +15,7 @@ typedef enum _FLCardType FLCardType;
 enum _FLStat { MAX_HEALTH, HEALTH, ATTACK, DEFENSE, RESISTANCE, SPEED, ENERGY };
 typedef enum _FLStat FLStat;
 
-enum _FLPowerWordType { DEAL, HEAL, INFLICT, DISPEL, IMMUNE, SUMMON };
+enum _FLPowerWordType { DEAL, MEND, INFLICT, DISPEL, IMMUNE, SUMMON };
 typedef enum _FLPowerWordType FLPowerWordType;
 
 enum _FLDamageType { PHYSICAL, MAGICAL };
@@ -74,6 +74,7 @@ enum _FLEffectType {
 };
 typedef enum _FLEffectType FLEffectType;
 
+// Structs
 struct _FLStatSheet {
     double hp;
     double hpg; // g stands for growth
@@ -149,16 +150,16 @@ struct _FLCardFamily {
 typedef struct _FLCardFamily FLCardFamily;
 
 struct _FLCharacter {
-    // Meta Data
-    char name[128];
-    char image[128];
-    char* description;
-
     // StatSheet
     FLStatSheet stats;
 
     // Deck
     FLCardFamily deck[8];
     FLUltimateCard ultimate;
+
+    // Meta Data
+    char name[128];
+    char image[128];
+    char description[256];
 };
 typedef struct _FLCharacter FLCharacter;
