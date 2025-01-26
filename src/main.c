@@ -5,12 +5,37 @@
 
 #define FL_EDITOR_VERSION "beta-1.0"
 #define MAX_COLUMNS getmaxx(stdscr)
+#define COLUMN_OFFSET 10
 
 void reinit_window(WINDOW* win) {
     wclear(win);
     box(win, 0, 0);
     wrefresh(win);
 }
+
+unsigned int menu_inline(WINDOW* win, int y, int x, char** menu_items, int menu_len) {
+    keypad(win, true);
+    int choice;
+    int index = 0;
+    while (true) {
+        mvwprintw(win, y, x, "                ");
+        mvwprintw(win, y, x, "%s", menu_items[index]);
+        choice = wgetch(win);
+        switch (choice) {
+        case KEY_UP:
+            if (index != 0)
+                index--;
+            break;
+        case KEY_DOWN:
+            if (index != menu_len - 1)
+                index++;
+            break;
+        case 10:
+            return index;
+            break;
+        }
+    }
+};
 
 WINDOW* print_info(void) {
     refresh();
@@ -101,6 +126,45 @@ void character_get_meta_data(FLCharacter* character, WINDOW* input, int current,
     wgetch(input);
 }
 
+void character_get_stats(FLCharacter* character, WINDOW* input, int current, int total) {
+    mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+    mvwprintw(input, 2, 1, "Step2: Stats");
+
+    mvwprintw(input, 3, 1, "HP: ");
+    mvwprintw(input, 3, 6 + COLUMN_OFFSET, "HP/lvl: ");
+
+    mvwprintw(input, 4, 1, "ATK: ");
+    mvwprintw(input, 4, 6 + COLUMN_OFFSET, "ATK/lvl: ");
+
+    mvwprintw(input, 5, 1, "DEF: ");
+    mvwprintw(input, 5, 6 + COLUMN_OFFSET, "DEF/lvl: ");
+
+    mvwprintw(input, 6, 1, "RES: ");
+    mvwprintw(input, 6, 6 + COLUMN_OFFSET, "RES/lvl: ");
+
+    mvwprintw(input, 7, 1, "SPD: ");
+    mvwprintw(input, 7, 6 + COLUMN_OFFSET, "Quality: ");
+
+    mvwprintw(input, 8, 1, "Regen: ");
+
+    mvwscanw(input, 3, 5, "%lf", &character->stats.hp);
+    mvwscanw(input, 3, 14 + COLUMN_OFFSET, "%lf", &character->stats.hpg);
+    mvwscanw(input, 4, 6, "%lf", &character->stats.atk);
+    mvwscanw(input, 4, 15 + COLUMN_OFFSET, "%lf", &character->stats.atkg);
+    mvwscanw(input, 5, 6, "%lf", &character->stats.def);
+    mvwscanw(input, 5, 15 + COLUMN_OFFSET, "%lf", &character->stats.defg);
+    mvwscanw(input, 6, 6, "%lf", &character->stats.res);
+    mvwscanw(input, 6, 15 + COLUMN_OFFSET, "%lf", &character->stats.resg);
+    mvwscanw(input, 7, 6, "%lf", &character->stats.spd);
+
+    char* quality_list[] = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
+    character->stats.quality = menu_inline(input, 7, 15 + COLUMN_OFFSET, quality_list, 5);
+
+    char* regen_list[] = {"AUTO", "OFFENSIVE", "DEFENSIVE"};
+    character->stats.regen = menu_inline(input, 8, 8, regen_list, 3);
+    wgetch(input);
+}
+
 FLCharacter character_get_info(int current, int total) {
     refresh();
     FLCharacter data;
@@ -108,6 +172,9 @@ FLCharacter character_get_info(int current, int total) {
     box(input, 0, 0);
 
     character_get_meta_data(&data, input, current, total);
+    reinit_window(input);
+
+    character_get_stats(&data, input, current, total);
     reinit_window(input);
 
     return data;
