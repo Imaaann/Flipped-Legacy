@@ -1,5 +1,7 @@
 #pragma once
 
+#define DECK_SIZE 6
+
 enum _FLQuality { COMMON, UNCOMMON, RARE, EPIC, LEGENDARY };
 typedef enum _FLQuality FLQuality;
 
@@ -8,9 +10,6 @@ typedef enum _FLRegen FLRegen;
 
 enum _FLCardClass { NORMAL, INCANTATION, ULTIMATE };
 typedef enum _FLCardClass FLCardClass;
-
-enum _FLCardType { ATK, HEAL, BUFF, DEBUFF };
-typedef enum _FLCardType FLCardType;
 
 enum _FLStat { MAX_HEALTH, HEALTH, ATTACK, DEFENSE, RESISTANCE, SPEED, ENERGY, UNDEFINED_STAT };
 typedef enum _FLStat FLStat;
@@ -137,14 +136,12 @@ typedef struct _FLWord FLWord;
 
 struct _FLCard {
     FLCardClass cardClass;
-    FLCardType type;
     FLWord words[2];
 };
 typedef struct _FLCard FLCard;
 
 struct _FLUltimateCard {
     FLCardClass cardClass;
-    FLCardType type;
     int energyCost;
     FLWord words[3];
 };
@@ -160,7 +157,7 @@ struct _FLCharacter {
     FLStatSheet stats;
 
     // Deck
-    FLCardFamily deck[8];
+    FLCardFamily deck[DECK_SIZE];
     FLUltimateCard ultimate;
 
     // Meta Data

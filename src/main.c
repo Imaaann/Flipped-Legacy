@@ -338,12 +338,9 @@ void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
     char* className = (deck_index == NORMAL) ? "Normal Attack" : "Incantation";
     mvwprintw(input, 5, 1, "                                ");
     mvwprintw(input, 5, 1, "Card Class: %s", className);
-    mvwprintw(input, 6, 1, "Card Type: ");
+    wrefresh(input);
 
     card->cardClass = (deck_index == NORMAL) ? NORMAL : INCANTATION;
-
-    char* typeOptions[] = {"Attack", "Heal", "Buff", "Debuff"};
-    card->type = menu_inline(input, 6, 12, typeOptions, 5);
 
     WINDOW* wordInput = subwin(input, 15, MAX_COLUMNS - 2, 14, 1);
     wattron(wordInput, A_BOLD);
@@ -443,10 +440,10 @@ FLCharacter character_get_info(int current, int total) {
     character_get_stats(&data, input, current, total);
     reinit_window(input);
 
-    for (unsigned int i = 0; i < 4 + data.stats.quality; i++) {
+    for (unsigned int i = 0; i < 2 + data.stats.quality; i++) {
         mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
         mvwprintw(input, 2, 1, "Step3: Card creation");
-        fl_card_family_get_info(&data.deck[i], input, i, 4 + data.stats.quality);
+        fl_card_family_get_info(&data.deck[i], input, i, 2 + data.stats.quality);
     }
 
     return data;
