@@ -9,16 +9,16 @@ typedef enum _FLRegen FLRegen;
 enum _FLCardClass { NORMAL, INCANTATION, ULTIMATE };
 typedef enum _FLCardClass FLCardClass;
 
-enum _FLCardType { ATK, HEAL, BUFF, DEBUFF, COUNTER };
+enum _FLCardType { ATK, HEAL, BUFF, DEBUFF };
 typedef enum _FLCardType FLCardType;
 
-enum _FLStat { MAX_HEALTH, HEALTH, ATTACK, DEFENSE, RESISTANCE, SPEED, ENERGY };
+enum _FLStat { MAX_HEALTH, HEALTH, ATTACK, DEFENSE, RESISTANCE, SPEED, ENERGY, UNDEFINED_STAT };
 typedef enum _FLStat FLStat;
 
-enum _FLPowerWordType { DEAL, MEND, INFLICT, DISPEL, IMMUNE, SUMMON };
+enum _FLPowerWordType { DEAL, MEND, INFLICT, DISPEL, IMMUNE };
 typedef enum _FLPowerWordType FLPowerWordType;
 
-enum _FLDamageType { PHYSICAL, MAGICAL };
+enum _FLDamageType { PHYSICAL, MAGICAL, UNDEFINED_DAMAGE };
 typedef enum _FLDamageType FLDamageType;
 
 enum _FLConditionType {
@@ -49,29 +49,30 @@ typedef enum _FLConditionType FLConditionType;
 
 enum _FLEffectType {
     // BUFFS
-    STATS_UP,
-    STATS_UP_STACK,
-    ROLL,
-    REFLECT,
-    ENERGY_SIPHON,
-    INVISIBILITY,
-    BARRIER,
-    INSPIRATION,
-    ARCANE_STAMP,
+    STATS_UP,       // 2s 2c
+    STATS_UP_STACK, // 1s 1c
+    DODGE,          // 0s 0c
+    REFLECT,        // 0s 0c
+    ENERGY_SIPHON,  // 0s 0c
+    INVISIBILITY,   // 0s 0c
+    BARRIER,        // 1s 1c
+    INSPIRATION,    // 0s 0c
+    ARCANE_STAMP,   // 0s 0c
 
     // DEBUFFS
-    STATS_DOWN,
-    STATS_DOWN_STACK,
-    NASTY_WOUND,
-    SEAL,
-    SILENCE,
-    TAUNT,
-    DISARM,
-    BIND,
-    PARALYZED,
-    SKILL_DRAIN,
-    DISCONCERT,
-    CONFUSED,
+    STATS_DOWN,       // 2s 2c
+    STATS_DOWN_STACK, // 1s 1c
+    NASTY_WOUND,      // 0s 1c
+    SEAL,             // 0s 0c
+    SILENCE,          // 0s 0c
+    TAUNT,            // 0s 0c
+    DISARM,           // 0s 0c
+    BIND,             // 0s 0c
+    PARALYZED,        // 0s 0c
+    SKILL_DRAIN,      // 0s 0c
+    DISCONCERT,       // 0s 0c
+    CONFUSED,         // 0s 0c
+    DISRUPT,          // 0s 0c
 
     UNDEFINED_EFFECT
 };
@@ -120,10 +121,11 @@ typedef struct _FLCondition FLCondition;
 struct _FLPowerWord {
     FLPowerWordType type;
     int target;
+    int coeff;
     FLStat stat;
+    FLDamageType dmgType;
     FLEffect effect;
     int length;
-    FLDamageType dmgType;
 };
 typedef struct _FLPowerWord FLPowerWord;
 
@@ -134,14 +136,14 @@ struct _FLWord {
 typedef struct _FLWord FLWord;
 
 struct _FLCard {
-    FLCardClass class;
+    FLCardClass cardClass;
     FLCardType type;
     FLWord words[2];
 };
 typedef struct _FLCard FLCard;
 
 struct _FLUltimateCard {
-    FLCardClass class;
+    FLCardClass cardClass;
     FLCardType type;
     int energyCost;
     FLWord words[3];

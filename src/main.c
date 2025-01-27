@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define FL_EDITOR_VERSION "beta-1.0"
+#define FL_EDITOR_VERSION "beta-0.1.0"
 #define MAX_COLUMNS getmaxx(stdscr)
 #define COLUMN_OFFSET 10
 
@@ -101,8 +101,7 @@ FLGameData print_basic_info(FLGameData data) {
     return data;
 }
 
-void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
-    mvwprintw(input, 0, 0, "Word %d", word_num);
+void fl_card_get_word_condition(FLWord* word, WINDOW* input) {
     mvwprintw(input, 1, 0, "Condition: ");
     char* conditionOptions[] = {"NONE",
                                 "UNDER HP",
@@ -129,6 +128,13 @@ void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
     word->condition.type = menu_inline(input, 1, 12, conditionOptions, 22);
 
     switch (word->condition.type) {
+
+    case NONE:
+    case DAMAGE:
+        word->condition.coeff1 = -1;
+        word->condition.coeff2 = -1;
+        word->condition.effect = UNDEFINED_EFFECT;
+        break;
 
     case UNDER_HP:
     case ABOVE_HP:
@@ -179,7 +185,7 @@ void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
     case TARGET_BUFF:
     case IS_BUFF:
         mvwprintw(input, 2, 0, "Effect: ");
-        char* buffOption[] = {"STATS UP", "STATS UP STACKABLE", "ROLL",
+        char* buffOption[] = {"STATS UP", "STATS UP STACKABLE", "DODGE",
                               "REFLECT",  "ENERGY SIPHON",      "INVISIBILITY",
                               "BARRIER",  "INSPIRATION",        "ARCANE STAMP"};
         word->condition.effect = menu_inline(input, 2, 8, buffOption, 9);
@@ -193,12 +199,137 @@ void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
         char* debuffOption[] = {
             "STATS DOWN", "STATS DOWN STACK", "NASTY WOUND", "SEAL",      "SILENCE",
             "TAUNT",      "DISARM",           "BIND",        "PARALYZED", "SKILL DRAIN",
-            "DISCONCERT", "CONFUSED"};
-        word->condition.effect = menu_inline(input, 2, 8, debuffOption, 9);
+            "DISCONCERT", "CONFUSED",         "DISRUPT"};
+        word->condition.effect = menu_inline(input, 2, 8, debuffOption, 13);
         word->condition.coeff1 = -1;
         word->condition.coeff2 = -1;
         break;
     }
+}
+
+void fl_effect_set_undefined(FLEffect* eff) {
+    eff->type = UNDEFINED_EFFECT;
+    eff->coeff1 = -1;
+    eff->coeff2 = -1;
+    eff->stat1 = UNDEFINED_STAT;
+    eff->stat2 = UNDEFINED_STAT;
+}
+
+void fl_effect_get_info(FLEffect* eff, WINDOW* input, int y, int x) {
+    mvwprintw(input, y, x, "Effect: ");
+    char* effectOptions[] = {
+        "STATS UP",         "STATS UP STACK", "DODGE",       "REFLECT",      "ENERGY SIPHON",
+        "INVISIBILITY",     "BARRIER",        "INSPIRATION", "ARCANE STAMP", "STATS DOWN",
+        "STATS DOWN STACK", "NASTY WOUND",    "SEAL",        "SILENCE",      "TAUNT",
+        "DISARM",           "BIND",           "PARALYZED",   "SKILL DRAIN",  "DISCONCERT",
+        "CONFUSED",         "DISRUPT"};
+    char* statOptions[] = {"MAX HP", "HP", "ATTACK", "DEFENSE", "RESISTANCE", "SPEED", "ENERGY"};
+    eff->type = menu_inline(input, y, x + 8, effectOptions, 22);
+
+    switch (eff->type) {
+    case STATS_UP:
+    case STATS_DOWN:
+        mvwprintw(input, y + 1, x, "Stat Scale 1:");
+        mvwprintw(input, y + 2, x, "Scale 1:");
+        mvwprintw(input, y + 3, x, "Stat Scale 2:");
+        mvwprintw(input, y + 4, x, "Scale 2:");
+        eff->stat1 = menu_inline(input, y + 1, x + 13, statOptions, 7);
+        mvwscanw(input, y + 2, x + 8, "%d", &eff->coeff1);
+        eff->stat1 = menu_inline(input, y + 3, x + 13, statOptions, 7);
+        mvwscanw(input, y + 4, x + 8, "%d", &eff->coeff2);
+
+        break;
+    case STATS_UP_STACK:
+    case STATS_DOWN_STACK:
+    case BARRIER:
+        mvwprintw(input, y + 1, x, "Stat Scale 1:");
+        mvwprintw(input, y + 2, x, "Scale 1:");
+
+        eff->stat1 = menu_inline(input, y + 1, x + 13, statOptions, 7);
+        mvwscanw(input, y + 2, x + 8, "%d", &eff->coeff1);
+
+        eff->stat2 = UNDEFINED_STAT;
+        eff->coeff2 = -1;
+        break;
+    case NASTY_WOUND:
+        mvwprintw(input, y + 1, x, "Scale:");
+        mvwscanw(input, y + 1, x + 6, "%d", &eff->coeff1);
+
+        eff->stat1 = UNDEFINED_STAT;
+        eff->stat2 = UNDEFINED_STAT;
+        eff->coeff2 = -1;
+        break;
+    default:
+        eff->stat1 = UNDEFINED_STAT;
+        eff->stat2 = UNDEFINED_STAT;
+        eff->coeff1 = -1;
+        eff->coeff2 = -1;
+        break;
+    }
+}
+
+void fl_card_get_word_power(FLWord* word, WINDOW* input) {
+    mvwprintw(input, 4, 0, "Power word: ");
+    mvwprintw(input, 5, 0, "Target count: ");
+    char* statOptions[] = {"MAX HP", "HP", "ATTACK", "DEFENSE", "RESISTANCE", "SPEED", "ENERGY"};
+    char* powerWordOptions[] = {"DEAL", "HEAL", "INFLICT", "DISPEL", "IMMUNE"};
+    word->word.type = menu_inline(input, 4, 12, powerWordOptions, 5);
+
+    mvwscanw(input, 5, 14, "%d", &word->word.target);
+
+    switch (word->word.type) {
+    case DEAL:
+        mvwprintw(input, 6, 0, "Stat Scale: ");
+        mvwprintw(input, 7, 0, "Damage Type: ");
+        mvwprintw(input, 8, 0, "Scale: ");
+
+        word->word.stat = menu_inline(input, 6, 12, statOptions, 7);
+
+        char* dmgTypeOptions[] = {"PHYSICAL", "MAGICAL"};
+        word->word.dmgType = menu_inline(input, 7, 13, dmgTypeOptions, 2);
+
+        mvwscanw(input, 8, 7, "%d", &word->word.coeff);
+
+        word->word.length = -1;
+        fl_effect_set_undefined(&word->word.effect);
+        break;
+    case MEND:
+        mvwprintw(input, 6, 0, "Stat Scale: ");
+        mvwprintw(input, 7, 0, "Scale: ");
+        word->word.stat = menu_inline(input, 6, 12, statOptions, 7);
+
+        mvwscanw(input, 7, 7, "%d", &word->word.coeff);
+
+        word->word.dmgType = UNDEFINED_DAMAGE;
+        word->word.length = -1;
+        fl_effect_set_undefined(&word->word.effect);
+        break;
+    case DISPEL:
+        fl_effect_get_info(&word->word.effect, input, 6, 0);
+
+        word->word.stat = UNDEFINED_STAT;
+        word->word.length = -1;
+        word->word.dmgType = UNDEFINED_DAMAGE;
+        word->word.coeff = -1;
+        break;
+
+    case INFLICT:
+    case IMMUNE:
+        mvwprintw(input, 6, 0, "Length of effect: ");
+        fl_effect_get_info(&word->word.effect, input, 7, 0);
+        mvwscanw(input, 6, 18, "%d", &word->word.length);
+
+        word->word.stat = UNDEFINED_STAT;
+        word->word.dmgType = UNDEFINED_DAMAGE;
+        word->word.coeff = -1;
+        break;
+    }
+}
+
+void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
+    mvwprintw(input, 0, 0, "Word %d", word_num);
+    fl_card_get_word_condition(word, input);
+    fl_card_get_word_power(word, input);
 }
 
 void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
@@ -209,12 +340,12 @@ void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
     mvwprintw(input, 5, 1, "Card Class: %s", className);
     mvwprintw(input, 6, 1, "Card Type: ");
 
-    card->class = (deck_index == NORMAL) ? NORMAL : INCANTATION;
+    card->cardClass = (deck_index == NORMAL) ? NORMAL : INCANTATION;
 
-    char* typeOptions[] = {"Attack", "Heal", "Buff", "Debuff", "Counter"};
+    char* typeOptions[] = {"Attack", "Heal", "Buff", "Debuff"};
     card->type = menu_inline(input, 6, 12, typeOptions, 5);
 
-    WINDOW* wordInput = subwin(input, 10, MAX_COLUMNS - 2, 14, 1);
+    WINDOW* wordInput = subwin(input, 15, MAX_COLUMNS - 2, 14, 1);
     wattron(wordInput, A_BOLD);
     for (int i = 0; i < 2; i++) {
         whline(wordInput, 0, MAX_COLUMNS - 2);
@@ -303,7 +434,7 @@ void character_get_stats(FLCharacter* character, WINDOW* input, int current, int
 FLCharacter character_get_info(int current, int total) {
     refresh();
     FLCharacter data;
-    WINDOW* input = newwin(20, MAX_COLUMNS, 5, 0);
+    WINDOW* input = newwin(25, MAX_COLUMNS, 5, 0);
     box(input, 0, 0);
 
     character_get_meta_data(&data, input, current, total);
