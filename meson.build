@@ -8,9 +8,4 @@ curses_dep = dependency('curses', required: true)
 
 include_dir = include_directories('include')
 
-executable(
-    'main',
-    'src/main.c',
-    include_directories: include_dir,
-    dependencies: [curses_dep]
-)
+subdir('src')

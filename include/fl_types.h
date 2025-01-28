@@ -130,7 +130,7 @@ typedef struct _FLPowerWord FLPowerWord;
 
 struct _FLWord {
     FLCondition condition;
-    FLPowerWord word;
+    FLPowerWord power;
 };
 typedef struct _FLWord FLWord;
 
