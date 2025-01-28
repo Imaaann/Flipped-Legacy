@@ -333,7 +333,6 @@ void fl_card_get_word(FLWord* word, WINDOW* input, int word_num) {
 }
 
 void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
-    init_pair(COLOR_GREEN, COLOR_BLACK, 2);
 
     char* className = (deck_index == NORMAL) ? "Normal Attack" : "Incantation";
     mvwprintw(input, 5, 1, "                                ");
@@ -343,14 +342,13 @@ void fl_card_get_info(FLCard* card, WINDOW* input, int deck_index) {
     card->cardClass = (deck_index == NORMAL) ? NORMAL : INCANTATION;
 
     WINDOW* wordInput = subwin(input, 15, MAX_COLUMNS - 2, 14, 1);
-    wattron(wordInput, A_BOLD);
     for (int i = 0; i < 2; i++) {
         whline(wordInput, 0, MAX_COLUMNS - 2);
         fl_card_get_word(&card->words[i], wordInput, i + 1);
         wclear(wordInput);
         wrefresh(wordInput);
     }
-    wattroff(wordInput, A_BOLD);
+    delwin(wordInput);
     wrefresh(input);
 }
 
@@ -360,6 +358,24 @@ void fl_card_family_get_info(FLCardFamily* family, WINDOW* input, int current, i
         mvwprintw(input, 4, 1, "Card Stars: %d/3", i + 1);
         fl_card_get_info(&family->members[i], input, current);
     }
+}
+
+void fl_card_get_ultimate(FLUltimateCard* ultCard, WINDOW* input) {
+    mvwprintw(input, 1, 1, "Card Class: Ultimate");
+    mvwprintw(input, 2, 1, "Energy Cost: ");
+    wrefresh(input);
+    mvwscanw(input, 2, 14, "%d", &ultCard->energyCost);
+    ultCard->cardClass = ULTIMATE;
+
+    WINDOW* wordInput = subwin(input, 15, MAX_COLUMNS - 2, 14, 1);
+    for (int i = 0; i < 3; i++) {
+        whline(wordInput, 0, MAX_COLUMNS - 2);
+        fl_card_get_word(&ultCard->words[i], wordInput, i + 1);
+        wclear(wordInput);
+        wrefresh(wordInput);
+    }
+    delwin(input);
+    wrefresh(input);
 }
 
 void character_get_meta_data(FLCharacter* character, WINDOW* input, int current, int total) {
@@ -444,8 +460,12 @@ FLCharacter character_get_info(int current, int total) {
         mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
         mvwprintw(input, 2, 1, "Step3: Card creation");
         fl_card_family_get_info(&data.deck[i], input, i, 2 + data.stats.quality);
+        reinit_window(input);
     }
+    fl_card_get_ultimate(&data.ultimate, input);
+    reinit_window(input);
 
+    delwin(input);
     return data;
 }
 
