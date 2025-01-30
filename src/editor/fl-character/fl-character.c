@@ -93,3 +93,30 @@ void fl_character_get_input(FLCharacter* data, int current, int total) {
 
     delwin(input);
 }
+
+/**
+ * @brief saves the character array to a .flgc file.
+ * file is saved in the following way
+ * editorVersion, characterArray[]
+ *
+ * @param characterArray
+ * Array of characters to save
+ * @param data
+ * FLGame context, used to generate name of the file from game name
+ */
+void fl_character_save_to_file(FLCharacter* characterArray, FLGameData* data) {
+    char* fileName = (char*)malloc(strlen(data->gameName) + 8);
+    sprintf(fileName, "%s.flgc", data->gameName);
+
+    FILE* character_file = fopen(fileName, "wb");
+    free(fileName);
+
+    if (character_file == NULL)
+        return;
+
+    fwrite(data->editorVersion, 16 * sizeof(char), 1, character_file);
+    for (int i = 0; i < data->characterCount; i++) {
+        fwrite(&characterArray[i], sizeof(FLCharacter), 1, character_file);
+    }
+    fclose(character_file);
+}

@@ -14,7 +14,7 @@ void fl_game_data_input(FLGameData* data) {
     mvwprintw(input, 2, 1, "Character Count: ");
     mvwprintw(input, 3, 1, "Enemy Count: ");
 
-    char Buffer[256];
+    char Buffer[256] = {'\0'};
     mvwscanw(input, 1, 12, "%[^\n]s", Buffer);
     if (strlen(Buffer) > 63)
         exit(1);
@@ -26,5 +26,4 @@ void fl_game_data_input(FLGameData* data) {
 
     wrefresh(input);
     delwin(input);
-    return data;
 }

@@ -15,13 +15,14 @@ int main() {
 
     WINDOW* info = print_info();
 
-    FLGameData data;
+    FLGameData data = {0};
     fl_game_data_input(&data);
 
     FLCharacter characters[data.characterCount];
     for (int i = 0; i < data.characterCount; i++) {
         fl_character_get_input(&characters[i], i, data.characterCount);
     }
+    fl_character_save_to_file(characters, &data);
 
     delwin(info);
     getch();
