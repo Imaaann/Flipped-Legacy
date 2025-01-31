@@ -51,7 +51,7 @@ void fl_enemy_get_input(FLEnemy* enemy, int current, int total) {
 /**
  * @brief saves the enemy array to a .flge file.
  * file is saved in the following way
- * editorVersion, enemyArray[]
+ * enemyArray[]
  *
  * @param enemyArray
  * Array of enemies to save
@@ -65,7 +65,6 @@ void fl_enemy_save_to_file(FLEnemy* enemyArray, FLGameData* data) {
     FILE* enemyFile = fopen(fileName, "wb");
     free(fileName);
 
-    fwrite(data->editorVersion, 16 * sizeof(char), 1, enemyFile);
     for (int i = 0; i < data->enemyCount; i++) {
         fwrite(&enemyArray[i], sizeof(FLEnemy), 1, enemyFile);
     }

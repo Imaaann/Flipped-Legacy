@@ -8,6 +8,7 @@
 typedef enum { NEW_GAME, READ_GAME, EDIT_GAME, DELETE_GAME, EXIT } GameMenuOptions;
 
 static void new_game_handler(void);
+static void read_game_handler(void);
 
 int main() {
     initscr();
@@ -36,6 +37,10 @@ int main() {
         new_game_handler();
         break;
     case READ_GAME:
+        wclear(menu);
+        wrefresh(menu);
+        delwin(menu);
+        read_game_handler();
         break;
     case EDIT_GAME:
         break;
@@ -57,6 +62,8 @@ static void new_game_handler(void) {
     FLGameData data = {0};
     fl_game_data_input(&data);
 
+    fl_game_save_to_file(&data);
+
     FLCharacter characters[data.characterCount];
     for (int i = 0; i < data.characterCount; i++) {
         fl_character_get_input(&characters[i], i, data.characterCount);
@@ -68,4 +75,22 @@ static void new_game_handler(void) {
         fl_enemy_get_input(&enemies[i], i, data.enemyCount);
     }
     fl_enemy_save_to_file(enemies, &data);
+}
+
+static void read_game_handler(void) {
+    FLGameData gameData = {0};
+    char buffer[64] = {'\0'};
+
+    WINDOW* main = newwin(25, MAX_COLUMNS, 5, 0);
+    reinit_window(main);
+    mvwprintw(main, 1, 1, "Game Name: ");
+    mvwscanw(main, 1, 12, "%[^\n]s", buffer);
+
+    fl_game_from_file(buffer, &gameData, main);
+    reinit_window(main);
+
+    fl_game_print(&gameData, main);
+    reinit_window(main);
+
+    delwin(main);
 }

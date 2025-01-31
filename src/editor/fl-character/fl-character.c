@@ -96,7 +96,7 @@ void fl_character_get_input(FLCharacter* data, int current, int total) {
 /**
  * @brief saves the character array to a .flgc file.
  * file is saved in the following way
- * editorVersion, characterArray[]
+ * characterArray[]
  *
  * @param characterArray
  * Array of characters to save
@@ -113,7 +113,6 @@ void fl_character_save_to_file(FLCharacter* characterArray, FLGameData* data) {
     if (characterFile == NULL)
         return;
 
-    fwrite(data->editorVersion, 16 * sizeof(char), 1, characterFile);
     for (int i = 0; i < data->characterCount; i++) {
         fwrite(&characterArray[i], sizeof(FLCharacter), 1, characterFile);
     }
