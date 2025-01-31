@@ -4,9 +4,7 @@
 #include <string.h>
 #include <utils.h>
 
-void fl_character_get_meta_data_input(FLCharacter* character, WINDOW* input, int current,
-                                      int total) {
-    mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+void fl_character_get_meta_data_input(FLCharacter* character, WINDOW* input) {
     mvwprintw(input, 2, 1, "Step1: MetaData");
     mvwprintw(input, 3, 1, "Name: ");
     mvwprintw(input, 4, 1, "Image Path (absolute): ");
@@ -32,8 +30,7 @@ void fl_character_get_meta_data_input(FLCharacter* character, WINDOW* input, int
     wgetch(input);
 }
 
-void fl_character_get_stats_input(FLCharacter* character, WINDOW* input, int current, int total) {
-    mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+void fl_character_get_stats_input(FLCharacter* character, WINDOW* input) {
     mvwprintw(input, 2, 1, "Step2: Stats");
 
     mvwprintw(input, 3, 1, "HP: ");
@@ -76,10 +73,12 @@ void fl_character_get_input(FLCharacter* data, int current, int total) {
     WINDOW* input = newwin(25, MAX_COLUMNS, 5, 0);
     box(input, 0, 0);
 
-    fl_character_get_meta_data_input(data, input, current, total);
+    mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+    fl_character_get_meta_data_input(data, input);
     reinit_window(input);
 
-    fl_character_get_stats_input(data, input, current, total);
+    mvwprintw(input, 1, 1, "Character Number: %d/%d", current, total);
+    fl_character_get_stats_input(data, input);
     reinit_window(input);
 
     for (unsigned int i = 0; i < 2 + data->stats.quality; i++) {
@@ -108,15 +107,15 @@ void fl_character_save_to_file(FLCharacter* characterArray, FLGameData* data) {
     char* fileName = (char*)malloc(strlen(data->gameName) + 8);
     sprintf(fileName, "%s.flgc", data->gameName);
 
-    FILE* character_file = fopen(fileName, "wb");
+    FILE* characterFile = fopen(fileName, "wb");
     free(fileName);
 
-    if (character_file == NULL)
+    if (characterFile == NULL)
         return;
 
-    fwrite(data->editorVersion, 16 * sizeof(char), 1, character_file);
+    fwrite(data->editorVersion, 16 * sizeof(char), 1, characterFile);
     for (int i = 0; i < data->characterCount; i++) {
-        fwrite(&characterArray[i], sizeof(FLCharacter), 1, character_file);
+        fwrite(&characterArray[i], sizeof(FLCharacter), 1, characterFile);
     }
-    fclose(character_file);
+    fclose(characterFile);
 }

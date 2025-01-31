@@ -153,16 +153,25 @@ struct _FLCardFamily {
 typedef struct _FLCardFamily FLCardFamily;
 
 struct _FLCharacter {
+    // Meta Data
+    char name[128];
+    char image[128];
+    char description[256];
+
     // StatSheet
     FLStatSheet stats;
 
     // Deck
     FLCardFamily deck[DECK_SIZE];
     FLUltimateCard ultimate;
-
-    // Meta Data
-    char name[128];
-    char image[128];
-    char description[256];
 };
 typedef struct _FLCharacter FLCharacter;
+
+struct _FLEnemy {
+    FLCharacter base;
+    int attackBias;
+    int buffBias;
+    int debuffBias;
+    int healBias;
+};
+typedef struct _FLEnemy FLEnemy;

@@ -7,7 +7,8 @@ src_files = [
   'fl-effect/fl-effect.c',
   'fl-power-word/fl-power-word.c',
   'fl-game/fl-game.c',
-  'fl-word/fl-word.c'
+  'fl-word/fl-word.c',
+  'fl-enemy/fl-enemy.c'
 ]
 
 executable(

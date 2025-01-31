@@ -1,4 +1,5 @@
 #include "fl-character/fl-character.h"
+#include "fl-enemy/fl-enemy.h"
 #include "fl-game/fl-game.h"
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
@@ -23,6 +24,12 @@ int main() {
         fl_character_get_input(&characters[i], i, data.characterCount);
     }
     fl_character_save_to_file(characters, &data);
+
+    FLEnemy enemies[data.enemyCount];
+    for (int i = 0; i < data.enemyCount; i++) {
+        fl_enemy_get_input(&enemies[i], i, data.enemyCount);
+    }
+    fl_enemy_save_to_file(enemies, &data);
 
     delwin(info);
     getch();
