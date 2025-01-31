@@ -34,6 +34,38 @@ unsigned int menu_inline(WINDOW* win, int y, int x, char** menu_items, int menu_
     }
 };
 
+unsigned int menu_multiline(WINDOW* win, int y, int x, char** menu_items, int menu_len,
+                            short color) {
+    keypad(win, true);
+    int choice;
+    int highlighted = 0;
+    while (true) {
+        for (int i = 0; i < menu_len; i++) {
+            mvwprintw(win, y + i, x, "                                ");
+            if (i == highlighted) {
+                wattron(win, COLOR_PAIR(color));
+            }
+            mvwprintw(win, y + i, x, "%s", menu_items[i]);
+            wattroff(win, COLOR_PAIR(color));
+        }
+
+        choice = wgetch(win);
+        switch (choice) {
+        case KEY_UP:
+            if (highlighted != 0)
+                highlighted--;
+            break;
+        case KEY_DOWN:
+            if (highlighted != menu_len - 1)
+                highlighted++;
+            break;
+        case 10:
+            return highlighted;
+            break;
+        }
+    }
+}
+
 WINDOW* print_info(void) {
     refresh();
 
