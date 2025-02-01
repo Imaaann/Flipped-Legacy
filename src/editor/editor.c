@@ -29,17 +29,15 @@ int main() {
                            "5. Exit"};
     unsigned int choice = menu_multiline(menu, 1, 1, menuOptions, 5, 2);
 
+    wclear(menu);
+    wrefresh(menu);
+    delwin(menu);
+
     switch (choice) {
     case NEW_GAME:
-        wclear(menu);
-        wrefresh(menu);
-        delwin(menu);
         new_game_handler();
         break;
     case READ_GAME:
-        wclear(menu);
-        wrefresh(menu);
-        delwin(menu);
         read_game_handler();
         break;
     case EDIT_GAME:
@@ -50,7 +48,6 @@ int main() {
         break;
     }
 
-    delwin(menu);
     delwin(info);
     getch();
     endwin();
@@ -80,8 +77,9 @@ static void new_game_handler(void) {
 static void read_game_handler(void) {
     FLGameData gameData = {0};
     char buffer[64] = {'\0'};
+    char* menuOptions[] = {"Show Characters", "Show Enemies", "Show levels", "Exit"};
 
-    WINDOW* main = newwin(25, MAX_COLUMNS, 5, 0);
+    WINDOW* main = newwin(MAX_ROWS - 6, MAX_COLUMNS, 5, 0);
     reinit_window(main);
     mvwprintw(main, 1, 1, "Game Name: ");
     mvwscanw(main, 1, 12, "%[^\n]s", buffer);
@@ -90,7 +88,25 @@ static void read_game_handler(void) {
     reinit_window(main);
 
     fl_game_print(&gameData, main);
-    reinit_window(main);
 
-    delwin(main);
+    FLCharacter characterArray[gameData.characterCount];
+    fl_character_from_file(characterArray, gameData.gameName, gameData.characterCount);
+
+    unsigned int choice;
+    while (true) {
+        choice = menu_multiline(main, 1, MAX_COLUMNS - 33, menuOptions, 4, 5);
+        switch (choice) {
+        case 0:
+            fl_character_print_all(main, characterArray, gameData.characterCount);
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            delwin(main);
+            return;
+            break;
+        }
+    }
 }

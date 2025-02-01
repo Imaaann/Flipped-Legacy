@@ -93,12 +93,13 @@ struct _FLStatSheet {
 };
 typedef struct _FLStatSheet FLStatSheet;
 
-typedef struct {
+struct _FLGameData {
     char editorVersion[16];
     char gameName[64];
     int characterCount;
     int enemyCount;
-} FLGameData;
+};
+typedef struct _FLGameData FLGameData;
 
 struct _FLEffect {
     FLEffectType type;

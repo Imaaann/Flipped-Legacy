@@ -93,6 +93,81 @@ void fl_character_get_input(FLCharacter* data, int current, int total) {
     delwin(input);
 }
 
+void fl_character_print(WINDOW* main, FLCharacter* character) {
+    const char* qualities[] = {"COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"};
+    const char* regens[] = {"AUTO", "OFFENSIVE", "DEFENSIVE"};
+    char* options[] = {"Next", "Prev", "Exit"};
+    const int deckSize = character->stats.quality + 2;
+    reinit_window(main);
+
+    // MetaData
+    mvwprintw(main, 1, 1, "Character Name: %s", character->name);
+    mvwprintw(main, 2, 1, "Image: %s", character->image);
+    mvwprintw(main, 3, 1, "Description: %s", character->description);
+
+    // Stats
+    mvwprintw(main, 4, 1, "Stats: ");
+    mvwprintw(main, 5, 1, "Hp: %.2f       | Hp/lvl: %.2f", character->stats.hp,
+              character->stats.hpg);
+    mvwprintw(main, 6, 1, "Atk: %.2f      | Atk/lvl: %.2f", character->stats.atk,
+              character->stats.atkg);
+    mvwprintw(main, 7, 1, "Def: %.2f      | Def/lvl: %.2f", character->stats.def,
+              character->stats.defg);
+    mvwprintw(main, 8, 1, "Res: %.2f      | Res/lvl: %.2f", character->stats.res,
+              character->stats.resg);
+    mvwprintw(main, 9, 1, "Spd: %.2f      | Regen: %s", character->stats.spd,
+              regens[character->stats.regen]);
+    mvwprintw(main, 10, 1, "Quality: %s", qualities[character->stats.quality]);
+    mvwprintw(main, 11, 1, "Card Show: ");
+
+    int index = 0;
+    while (true) {
+        fl_card_family_print(&character->deck[index], main, index + 1, deckSize);
+        unsigned int choice = menu_inline(main, 11, 12, options, 3, 1);
+        switch (choice) {
+        case 0:
+            if (index != deckSize - 1)
+                index++;
+            break;
+        case 1:
+            if (index != 0)
+                index--;
+            break;
+        case 2:
+            reinit_window(main);
+            return;
+            break;
+        }
+    }
+}
+
+void fl_character_print_all(WINDOW* main, FLCharacter* characterArray, int characterCount) {
+    WINDOW* characterPrintWin = subwin(main, MAX_ROWS - 12, MAX_COLUMNS - 2, 10, 1);
+    char* buttons[] = {"Next", "Prev", "Exit"};
+    int index = 0;
+    while (true) {
+        reinit_window(characterPrintWin);
+        fl_character_print(characterPrintWin, &characterArray[index]);
+        mvwprintw(characterPrintWin, 1, MAX_COLUMNS - 40, "Character Showcase:");
+        unsigned int choice = menu_multiline(characterPrintWin, 2, MAX_COLUMNS - 40, buttons, 3, 1);
+        switch (choice) {
+        case 0:
+            if (index != characterCount - 1)
+                index++;
+            break;
+        case 1:
+            if (index != 0)
+                index--;
+            break;
+        case 2:
+            wclear(characterPrintWin);
+            delwin(characterPrintWin);
+            return;
+            break;
+        }
+    }
+}
+
 /**
  * @brief saves the character array to a .flgc file.
  * file is saved in the following way
@@ -116,5 +191,24 @@ void fl_character_save_to_file(FLCharacter* characterArray, FLGameData* data) {
     for (int i = 0; i < data->characterCount; i++) {
         fwrite(&characterArray[i], sizeof(FLCharacter), 1, characterFile);
     }
+    fclose(characterFile);
+}
+
+void fl_character_from_file(FLCharacter* characterArray, char* name, int characterCount) {
+    char* fileName = (char*)malloc(strlen(name) + 8);
+    sprintf(fileName, "%s.flgc", name);
+
+    FILE* characterFile = fopen(fileName, "rb");
+    free(fileName);
+
+    if (characterFile == NULL)
+        return;
+
+    int index = 0;
+    while (fread(&characterArray[index], sizeof(FLCharacter), 1, characterFile) &&
+           index < characterCount) {
+        index++;
+    }
+
     fclose(characterFile);
 }
