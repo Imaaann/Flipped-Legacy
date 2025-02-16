@@ -92,6 +92,9 @@ static void read_game_handler(void) {
     FLCharacter characterArray[gameData.characterCount];
     fl_character_from_file(characterArray, gameData.gameName, gameData.characterCount);
 
+    FLEnemy enemyArray[gameData.enemyCount];
+    fl_enemy_from_file(enemyArray, gameData.gameName, gameData.enemyCount);
+
     unsigned int choice;
     while (true) {
         choice = menu_multiline(main, 1, MAX_COLUMNS - 33, menuOptions, 4, 5);
@@ -100,6 +103,7 @@ static void read_game_handler(void) {
             fl_character_print_all(main, characterArray, gameData.characterCount);
             break;
         case 1:
+            fl_enemy_print_all(main, enemyArray, gameData.enemyCount);
             break;
         case 2:
             break;

@@ -48,6 +48,87 @@ void fl_enemy_get_input(FLEnemy* enemy, int current, int total) {
     delwin(input);
 }
 
+void fl_enemy_print(WINDOW* main, FLEnemy* enemy) {
+    const char* qualities[] = {"COMMON", "UNCOMMON", "RARE", "EPIC", "LEGENDARY"};
+    const char* regens[] = {"AUTO", "OFFENSIVE", "DEFENSIVE"};
+    char* options[] = {"Next", "Prev", "Exit"};
+    const int deckSize = enemy->base.stats.quality + 2;
+    reinit_window(main);
+
+    // MetaData
+    mvwprintw(main, 1, 1, "Enemy Name: %s", enemy->base.name);
+    mvwprintw(main, 2, 1, "Image: %s", enemy->base.image);
+    mvwprintw(main, 3, 1, "Description: %s", enemy->base.description);
+
+    // Stats
+    mvwprintw(main, 4, 1, "Stats: ");
+    mvwprintw(main, 5, 1, "Hp: %.2f       | Hp/lvl: %.2f", enemy->base.stats.hp,
+              enemy->base.stats.hpg);
+    mvwprintw(main, 6, 1, "Atk: %.2f      | Atk/lvl: %.2f", enemy->base.stats.atk,
+              enemy->base.stats.atkg);
+    mvwprintw(main, 7, 1, "Def: %.2f      | Def/lvl: %.2f", enemy->base.stats.def,
+              enemy->base.stats.defg);
+    mvwprintw(main, 8, 1, "Res: %.2f      | Res/lvl: %.2f", enemy->base.stats.res,
+              enemy->base.stats.resg);
+    mvwprintw(main, 9, 1, "Spd: %.2f      | Regen: %s", enemy->base.stats.spd,
+              regens[enemy->base.stats.regen]);
+    mvwprintw(main, 10, 1, "Quality: %s", qualities[enemy->base.stats.quality]);
+
+    // Biases
+    mvwprintw(main, 11, 1, "Attack Bias: %d      | Buff Bias: %d", enemy->attackBias,
+              enemy->buffBias);
+    mvwprintw(main, 12, 1, "Heal Bias: %d        | DeBuff Bias: %d", enemy->healBias,
+              enemy->debuffBias);
+
+    mvwprintw(main, 13, 1, "Card Show: ");
+    int index = 0;
+    while (true) {
+        fl_card_family_print(&enemy->base.deck[index], main, 15, index + 1, deckSize);
+        unsigned int choice = menu_inline(main, 13, 12, options, 3, 1);
+        switch (choice) {
+        case 0:
+            if (index != deckSize - 1)
+                index++;
+            break;
+        case 1:
+            if (index != 0)
+                index--;
+            break;
+        case 2:
+            reinit_window(main);
+            return;
+            break;
+        }
+    }
+}
+
+void fl_enemy_print_all(WINDOW* main, FLEnemy* enemyArray, int enemyCount) {
+    WINDOW* enemyPrintWin = subwin(main, MAX_ROWS - 12, MAX_COLUMNS - 2, 10, 1);
+    char* buttons[] = {"Next", "Prev", "Exit"};
+    int index = 0;
+    while (true) {
+        reinit_window(enemyPrintWin);
+        fl_enemy_print(enemyPrintWin, &enemyArray[index]);
+        mvwprintw(enemyPrintWin, 1, MAX_COLUMNS - 40, "Enemy Showcase:");
+        unsigned int choice = menu_multiline(enemyPrintWin, 2, MAX_COLUMNS - 40, buttons, 3, 1);
+        switch (choice) {
+        case 0:
+            if (index != enemyCount - 1)
+                index++;
+            break;
+        case 1:
+            if (index != 0)
+                index--;
+            break;
+        case 2:
+            wclear(enemyPrintWin);
+            delwin(enemyPrintWin);
+            return;
+            break;
+        }
+    }
+}
+
 /**
  * @brief saves the enemy array to a .flge file.
  * file is saved in the following way
@@ -70,4 +151,23 @@ void fl_enemy_save_to_file(FLEnemy* enemyArray, FLGameData* data) {
     }
 
     fclose(enemyFile);
+}
+
+void fl_enemy_from_file(FLEnemy* enemyArray, char* name, int characterCount) {
+    char* fileName = (char*)malloc(strlen(name) + 8);
+    sprintf(fileName, "%s.flge", name);
+
+    FILE* characterFile = fopen(fileName, "rb");
+    free(fileName);
+
+    if (characterFile == NULL)
+        return;
+
+    int index = 0;
+    while (fread(&enemyArray[index], sizeof(FLCharacter), 1, characterFile) &&
+           index < characterCount) {
+        index++;
+    }
+
+    fclose(characterFile);
 }

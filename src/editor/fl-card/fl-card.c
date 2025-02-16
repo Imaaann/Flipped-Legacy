@@ -48,22 +48,22 @@ void fl_card_family_get_input(FLCardFamily* family, WINDOW* input, int current, 
     }
 }
 
-void fl_card_family_print(FLCardFamily* family, WINDOW* main, int index, int total) {
+void fl_card_family_print(FLCardFamily* family, WINDOW* main, int y, int index, int total) {
     const char* classes[] = {"NORMAL", "INCANTATION"};
     const char* stars[] = {"*", "**", "***"};
     const FLCardClass classIndex = family->members[0].cardClass;
     char buffer[512] = {'\0'};
-    mvwprintw(main, 13, 1, "                                  ");
-    mvwprintw(main, 13, 1, "Card: %d/%d --- Class: %s", index, total, classes[classIndex]);
+    mvwprintw(main, y, 1, "                                  ");
+    mvwprintw(main, y, 1, "Card: %d/%d --- Class: %s", index, total, classes[classIndex]);
     for (int i = 0; i < 3; i++) {
-        mvwprintw(main, 14 + i * 3, 1, "(%s) Star: ", stars[i]);
+        mvwprintw(main, y + 1 + i * 3, 1, "(%s) Star: ", stars[i]);
         fl_word_get_semantic(&family->members[i].words[0], buffer);
-        mvwprintw(main, 15 + i * 3, 1,
+        mvwprintw(main, y + 2 + i * 3, 1,
                   "                                                                    ");
-        mvwprintw(main, 15 + i * 3, 1, "1. %s", buffer);
+        mvwprintw(main, y + 2 + i * 3, 1, "1. %s", buffer);
         fl_word_get_semantic(&family->members[i].words[1], buffer);
-        mvwprintw(main, 16 + i * 3, 1,
+        mvwprintw(main, y + 3 + i * 3, 1,
                   "                                                                    ");
-        mvwprintw(main, 16 + i * 3, 1, "2. %s", buffer);
+        mvwprintw(main, y + 3 + i * 3, 1, "2. %s", buffer);
     }
 }

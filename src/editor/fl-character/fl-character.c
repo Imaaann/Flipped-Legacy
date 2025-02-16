@@ -122,7 +122,7 @@ void fl_character_print(WINDOW* main, FLCharacter* character) {
 
     int index = 0;
     while (true) {
-        fl_card_family_print(&character->deck[index], main, index + 1, deckSize);
+        fl_card_family_print(&character->deck[index], main, 13, index + 1, deckSize);
         unsigned int choice = menu_inline(main, 11, 12, options, 3, 1);
         switch (choice) {
         case 0:
