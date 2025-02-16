@@ -67,3 +67,29 @@ void fl_card_family_print(FLCardFamily* family, WINDOW* main, int y, int index, 
         mvwprintw(main, y + 3 + i * 3, 1, "2. %s", buffer);
     }
 }
+
+void fl_card_ultimate_print(FLUltimateCard* ult, WINDOW* main, int y) {
+    char buffer[512] = {'\0'};
+    mvwprintw(main, y, 1, "ULTIMATE CARD                     ");
+    mvwprintw(main, y + 1, 1, "Energy Cost: %d", ult->energyCost);
+
+    mvwprintw(main, y + 2, 1,
+              "                                                                    ");
+    fl_word_get_semantic(&ult->words[0], buffer);
+    mvwprintw(main, y + 2, 1, "1. %s", buffer);
+
+    mvwprintw(main, y + 3, 1,
+              "                                                                    ");
+    fl_word_get_semantic(&ult->words[1], buffer);
+    mvwprintw(main, y + 3, 1, "2. %s", buffer);
+
+    mvwprintw(main, y + 4, 1,
+              "                                                                    ");
+    fl_word_get_semantic(&ult->words[2], buffer);
+    mvwprintw(main, y + 4, 1, "3. %s", buffer);
+
+    for (int i = 5; i < 15; i++) {
+        mvwprintw(main, y + i, 1,
+                  "                                                                    ");
+    }
+}

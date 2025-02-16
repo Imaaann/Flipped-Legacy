@@ -1,7 +1,7 @@
 #pragma once
 #include <ncurses/ncurses.h>
 
-#define FL_EDITOR_VERSION "beta-0.4.3"
+#define FL_EDITOR_VERSION "beta-0.4.4"
 #define MAX_COLUMNS getmaxx(stdscr)
 #define MAX_ROWS getmaxy(stdscr)
 #define COLUMN_OFFSET 10

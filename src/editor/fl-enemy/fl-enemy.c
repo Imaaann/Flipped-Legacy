@@ -83,11 +83,15 @@ void fl_enemy_print(WINDOW* main, FLEnemy* enemy) {
     mvwprintw(main, 13, 1, "Card Show: ");
     int index = 0;
     while (true) {
-        fl_card_family_print(&enemy->base.deck[index], main, 15, index + 1, deckSize);
+        if (index < deckSize) {
+            fl_card_family_print(&enemy->base.deck[index], main, 15, index + 1, deckSize);
+        } else {
+            fl_card_ultimate_print(&enemy->base.ultimate, main, 15);
+        }
         unsigned int choice = menu_inline(main, 13, 12, options, 3, 1);
         switch (choice) {
         case 0:
-            if (index != deckSize - 1)
+            if (index != deckSize)
                 index++;
             break;
         case 1:
