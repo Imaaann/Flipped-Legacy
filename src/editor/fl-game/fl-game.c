@@ -28,7 +28,7 @@ void fl_game_data_input(FLGameData* data) {
     delwin(input);
 }
 
-void fl_game_from_file(char* name, FLGameData* data, WINDOW* input) {
+void fl_game_from_file(char* name, FLGameData* data) {
     char* fileName = (char*)malloc(strlen(name) + 8);
     sprintf(fileName, "./%s.flg", name);
 
@@ -36,9 +36,6 @@ void fl_game_from_file(char* name, FLGameData* data, WINDOW* input) {
     free(fileName);
 
     if (dataFile == NULL) {
-        mvwprintw(input, 2, 1, "File Not found!");
-        wgetch(input);
-        delwin(input);
         return;
     }
 

@@ -173,16 +173,6 @@ void fl_character_print_all(WINDOW* main, FLCharacter* characterArray, int chara
     }
 }
 
-/**
- * @brief saves the character array to a .flgc file.
- * file is saved in the following way
- * characterArray[]
- *
- * @param characterArray
- * Array of characters to save
- * @param data
- * FLGame context, used to generate name of the file from game name
- */
 void fl_character_save_to_file(FLCharacter* characterArray, FLGameData* data) {
     char* fileName = (char*)malloc(strlen(data->gameName) + 8);
     sprintf(fileName, "%s.flgc", data->gameName);
