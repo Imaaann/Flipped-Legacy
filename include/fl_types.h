@@ -176,3 +176,10 @@ struct _FLEnemy {
     int healBias;
 };
 typedef struct _FLEnemy FLEnemy;
+
+struct _FLLoadedGame {
+    FLGameData* data;
+    FLCharacter* characterArray;
+    FLEnemy* enemyArray;
+};
+typedef struct _FLLoadedGame FLLoadedGame;

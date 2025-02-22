@@ -3,6 +3,7 @@
 #include "fl-game/fl-game.h"
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
+#include <stdlib.h>
 #include <utils.h>
 
 typedef enum { NEW_GAME, READ_GAME, EDIT_GAME, DELETE_GAME, EXIT } GameMenuOptions;
@@ -75,7 +76,6 @@ static void new_game_handler(void) {
 }
 
 static void read_game_handler(void) {
-    FLGameData gameData = {0};
     char buffer[64] = {'\0'};
     char* menuOptions[] = {"Show Characters", "Show Enemies", "Show levels", "Exit"};
 
@@ -84,33 +84,39 @@ static void read_game_handler(void) {
     mvwprintw(main, 1, 1, "Game Name: ");
     mvwscanw(main, 1, 12, "%[^\n]s", buffer);
 
-    fl_game_from_file(buffer, &gameData, main);
-    reinit_window(main);
+    FLLoadedGame game = fl_game_load(buffer);
 
-    fl_game_print(&gameData, main);
-
-    FLCharacter characterArray[gameData.characterCount];
-    fl_character_from_file(characterArray, gameData.gameName, gameData.characterCount);
-
-    FLEnemy enemyArray[gameData.enemyCount];
-    fl_enemy_from_file(enemyArray, gameData.gameName, gameData.enemyCount);
+    fl_game_print(game.data, main);
 
     unsigned int choice;
     while (true) {
         choice = menu_multiline(main, 1, MAX_COLUMNS - 33, menuOptions, 4, 5);
         switch (choice) {
         case 0:
-            fl_character_print_all(main, characterArray, gameData.characterCount);
+            fl_character_print_all(main, game.characterArray, game.data->characterCount);
             break;
         case 1:
-            fl_enemy_print_all(main, enemyArray, gameData.enemyCount);
+            fl_enemy_print_all(main, game.enemyArray, game.data->enemyCount);
             break;
         case 2:
             break;
         case 3:
+            free(game.data);
+            free(game.characterArray);
+            free(game.enemyArray);
             delwin(main);
             return;
             break;
         }
     }
+}
+
+static void edit_game_handler(void) {
+    char buffer[64] = {0};
+    char* menuOptions[] = {"Edit characters", "Edit enemies", "Edit Levels", "Exit"};
+
+    WINDOW* main = newwin(MAX_ROWS - 6, MAX_COLUMNS, 5, 0);
+    reinit_window(main);
+    mvwprintw(main, 1, 1, "Game Name: ");
+    mvwscanw(main, 1, 12, "%[^\n]s", buffer);
 }

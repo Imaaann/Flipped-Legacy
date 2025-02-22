@@ -20,5 +20,16 @@ void fl_game_save_to_file(FLGameData* data);
  *
  * @param name name of the file to read without the extenion
  * @param data struct to write to
+ *
+ * @exception gives back a data struct with character & enemy count = -1 on file not found exception
  */
 void fl_game_from_file(char* name, FLGameData* data);
+
+/**
+ * @brief loads an entire fl game instance from files
+ *
+ * @param name name of the game to load
+ * @return FLLoadedGame struct containing the game metadata, character array and enemy Array.
+ * Ownership of the pointers is left to the caller and must be free'd accordingly
+ */
+FLLoadedGame fl_game_load(char* name);

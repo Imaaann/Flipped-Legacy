@@ -1,4 +1,6 @@
 #include "fl-game.h"
+#include "fl-character/fl-character.h"
+#include "fl-enemy/fl-enemy.h"
 #include <stdlib.h>
 #include <string.h>
 #include <utils.h>
@@ -28,6 +30,24 @@ void fl_game_data_input(FLGameData* data) {
     delwin(input);
 }
 
+void fl_game_print(FLGameData* data, WINDOW* main) {
+    mvwprintw(main, 1, 1, "Game Name: %s", data->gameName);
+    mvwprintw(main, 2, 1, "Character Count: %d     | Enemy Count: %d", data->characterCount,
+              data->enemyCount);
+    mvwprintw(main, 3, 1, "Made with: %s", data->editorVersion);
+    wgetch(main);
+}
+
+void fl_game_save_to_file(FLGameData* data) {
+    char* fileName = (char*)malloc(strlen(data->gameName) + 8);
+    sprintf(fileName, "%s.flg", data->gameName);
+    FILE* dataFile = fopen(fileName, "w");
+    fprintf(dataFile, "%s\n%s\n%d\n%d\n", data->editorVersion, data->gameName, data->characterCount,
+            data->enemyCount);
+
+    free(fileName);
+}
+
 void fl_game_from_file(char* name, FLGameData* data) {
     char* fileName = (char*)malloc(strlen(name) + 8);
     sprintf(fileName, "./%s.flg", name);
@@ -36,6 +56,8 @@ void fl_game_from_file(char* name, FLGameData* data) {
     free(fileName);
 
     if (dataFile == NULL) {
+        data->characterCount = -1;
+        data->enemyCount = -1;
         return;
     }
 
@@ -54,26 +76,22 @@ void fl_game_from_file(char* name, FLGameData* data) {
     fclose(dataFile);
 }
 
-void fl_game_print(FLGameData* data, WINDOW* main) {
-    mvwprintw(main, 1, 1, "Game Name: %s", data->gameName);
-    mvwprintw(main, 2, 1, "Character Count: %d     | Enemy Count: %d", data->characterCount,
-              data->enemyCount);
-    mvwprintw(main, 3, 1, "Made with: %s", data->editorVersion);
-    wgetch(main);
-}
+FLLoadedGame fl_game_load(char* name) {
+    FLLoadedGame result = {0};
 
-/**
- * @brief Saves game metaData to a textual file with .flg extensio,
- *
- * @param data
- * metaData to save
- */
-void fl_game_save_to_file(FLGameData* data) {
-    char* fileName = (char*)malloc(strlen(data->gameName) + 8);
-    sprintf(fileName, "%s.flg", data->gameName);
-    FILE* dataFile = fopen(fileName, "w");
-    fprintf(dataFile, "%s\n%s\n%d\n%d\n", data->editorVersion, data->gameName, data->characterCount,
-            data->enemyCount);
+    result.data = (FLGameData*)calloc(1, sizeof(FLGameData));
+    strcpy(result.data->gameName, name);
+    fl_game_from_file(name, result.data);
 
-    free(fileName);
+    if (result.data->characterCount == -1)
+        return;
+
+    result.characterArray = (FLCharacter*)calloc(result.data->characterCount, sizeof(FLCharacter));
+    result.enemyArray = (FLEnemy*)calloc(result.data->enemyCount, sizeof(FLEnemy));
+
+    fl_character_from_file(result.characterArray, result.data->gameName,
+                           result.data->characterCount);
+    fl_enemy_from_file(result.enemyArray, result.data->gameName, result.data->enemyCount);
+
+    return result;
 }
