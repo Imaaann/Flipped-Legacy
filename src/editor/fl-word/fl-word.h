@@ -2,9 +2,6 @@
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
 
-// Alpha Version API
-void fl_card_get_word_input(FLWord* word, WINDOW* input, int word_num);
-
 // Flipped Legacy Editor - Full word API
 
 /**

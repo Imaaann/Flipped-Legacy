@@ -2,9 +2,6 @@
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
 
-// Alpha Version API
-void fl_condition_input(FLCondition* condition, WINDOW* input);
-
 // Flipped Legacy Editor - Condition API
 /**
  * @brief Gets a human readable string of the condition struct

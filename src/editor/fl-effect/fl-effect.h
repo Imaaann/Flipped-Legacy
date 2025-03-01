@@ -2,9 +2,6 @@
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
 
-// Alpha Version API
-void fl_effect_get_info(FLEffect* eff, WINDOW* input, int y, int x);
-
 // Flipped Legacy Editor - Effect API
 
 /**

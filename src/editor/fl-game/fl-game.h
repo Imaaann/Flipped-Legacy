@@ -2,10 +2,6 @@
 #include <fl_types.h>
 #include <ncurses/ncurses.h>
 
-// Alpha Version API
-void fl_game_data_input(FLGameData* data);
-void fl_game_print(FLGameData* data, WINDOW* main);
-
 // Flipped Legacy Editor - Game Metadata API
 
 /**
