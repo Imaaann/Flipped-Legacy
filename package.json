@@ -1,0 +1,38 @@
+{
+  "name": "flipped-legacy",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev:react": "vite",
+    "dev:electron": "electron .",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "transpile:electron": "tsc --project src/electron/tsconfig.json",
+    "dist:prepare": "yarn transpile:electron && yarn build",
+    "dist:mac": "yarn dist:prepare && electron-builder --mac --arm64",
+    "dist:win": "yarn dist:prepare && electron-builder --win --x64",
+    "dist:linux": "yarn dist:prepare && electron-builder --linux --x64"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0",
+    "electron": "^35.0.3",
+    "electron-builder": "^25.1.8"
+  }
+}

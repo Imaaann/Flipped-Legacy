@@ -1,0 +1,15 @@
+{
+  "appId": "com.ba-iman.flipped-legacy",
+  "files": ["dist-react", "dist-electron"],
+  "icon": "./desktopIcon.png",
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  },
+  "win": {
+    "target": ["portable", "msi"]
+  }
+}
